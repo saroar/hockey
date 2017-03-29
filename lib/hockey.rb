@@ -12,27 +12,13 @@ class Hockey
   end
 
   def format
-    result = {}
+    hash = {}
 
-    return false unless valid_score?(@team1_score) && valid_score?(@team2_score)
+    return false unless valid_score?(team1_score) && valid_score?(team2_score)
 
     case filename
-      when 'json'
-        match_result(result)
-        result.to_json
-      when 'html'
-        filename == 'html'
-        match_result(result)
-
-        indent_level = result.fetch(:indent_level, 0)
-
-        out = ' ' * indent_level + "<ul>\n"
-
-        result.each do |key, value|
-          out += ' ' * (indent_level + 2) + "<li><strong>#{key}:</strong>"
-          out += " <span>#{value}</span></li>\n"
-        end
-        out += ' ' * indent_level + "</ul>\n"
+    when 'json' then convert_json(hash)
+    when 'html' then convert_html(hash)
     end
   end
 
@@ -45,4 +31,18 @@ class Hockey
       hash.merge!(draw: 'Ничья')
     end
   end
+
+  def convert_html(hash)
+    match_result(hash)
+
+    hash.inject('<ul>') do |result, (key, value)|
+      result + "\n <li><strong>#{key}:</strong> <span>#{value}</span></li>\n"
+    end + "</ul>\n"
+  end
+
+  def convert_json(hash)
+    match_result(hash)
+    hash.to_json
+  end
 end
+

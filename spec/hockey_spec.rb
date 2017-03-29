@@ -54,7 +54,7 @@ describe Hockey do
     end
 
     describe 'html not valid score' do
-      let(:subject) { Hockey.new(2, "2", 'html') }
+      let(:subject) { Hockey.new(2, '2', 'html') }
       let(:result) { { draw: 'Ничья' } }
 
       it 'should' do
@@ -82,7 +82,7 @@ describe Hockey do
     describe 'html' do
       let(:subject) { Hockey.new(2, 2, 'html') }
       let(:result) { { draw: 'Ничья' } }
-      let(:html) { "<ul>\n  <li><strong>draw:</strong> <span>Ничья</span></li>\n</ul>\n" }
+      let(:html) { "<ul>\n <li><strong>draw:</strong> <span>Ничья</span></li>\n</ul>\n" }
 
       it 'should' do
         expect(subject.format).to eq(html)
@@ -90,4 +90,24 @@ describe Hockey do
     end
   end
 
+  describe 'convert_html' do
+    let(:subject) { Hockey.new(2, 2, 'html') }
+    # let(:result) { { draw: 'Ничья' } }
+    let(:hash) { { draw: 'Ничья' } }
+    let(:html) { "<ul>\n <li><strong>draw:</strong> <span>Ничья</span></li>\n</ul>\n" }
+
+    it 'should have html format' do
+      expect(subject.convert_html(hash)).to eq(html)
+    end
+  end
+
+  describe 'convert_json' do
+    let(:subject) { Hockey.new(2, 2, 'html') }
+    let(:hash) { { draw: 'Ничья' } }
+    let(:json) { hash.to_json }
+
+    it 'should have json format' do
+      expect(subject.convert_json(hash)).to eq(json)
+    end
+  end
 end
