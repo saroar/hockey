@@ -1,48 +1,59 @@
+# frozen_string_literal: true
+require_relative 'abstract_output'
+require_relative 'text_output'
+require_relative 'json_output'
+require_relative 'html_output'
+require_relative 'team'
+require_relative 'game_result'
+
+require 'rubygems'
+require 'bundler/setup'
+
 class Hockey
-  attr_reader :team1_score, :team2_score, :filename
+  attr_reader :team1, :team2
 
-  def initialize(team1_score, team2_score, filename)
-    @team1_score = team1_score
-    @team2_score = team2_score
-    @filename = filename
+  def initialize(team1, team2, format_parameter = :text)
+    @team1 = team1
+    @team2 = team2
+    @formatter = build_formatter(format_parameter)
   end
 
-  def valid_score?(score)
-    score.is_a? Integer
+  def print_result
+    @game_result = GameResult.new(who_win?(team1, team2))
+    @game_result.to_s
   end
 
-  def format
-    hash = {}
-
-    return false unless valid_score?(team1_score) && valid_score?(team2_score)
-
-    case filename
-    when 'json' then convert_json(hash)
-    when 'html' then convert_html(hash)
-    end
+  def print_format
+    @formatter
   end
 
-  def match_result(hash)
-    if team1_score > team2_score
-      hash.merge!(team1_score: 'Победила первая комадна')
-    elsif team1_score < team2_score
-      hash.merge!(team2_score: 'Победила вторая комадна')
+  private
+
+  # @param [Team] team1
+  # @param [Team] team2
+  def who_win?(team1, team2)
+    if team1.score > team2.score
+      "#{team1.name} win"
+    elsif team1.score < team2.score
+      "#{team2.name} win"
     else
-      hash.merge!(draw: 'Ничья')
+      'Game draw both team done good job'
     end
   end
 
-  def convert_html(hash)
-    match_result(hash)
+  # @param [Symbol] format_parameter
+  # @return [AbstractOutput]
+  def build_formatter(format_parameter)
+    game_result = GameResult.new(who_win?(team1, team2)).to_s
+    json_output = JsonOutput.new.format(game_result)
+    html_output = HtmlOutput.new.format(game_result)
+    text_output = TextOutput.new.format(game_result)
 
-    hash.inject('<ul>') do |result, (key, value)|
-      result + "\n <li><strong>#{key}:</strong> <span>#{value}</span></li>\n"
-    end + "</ul>\n"
-  end
-
-  def convert_json(hash)
-    match_result(hash)
-    hash.to_json
+    case format_parameter
+    when :json then json_output
+    when :html then html_output
+    else
+      text_output
+    end
   end
 end
-
