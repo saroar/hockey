@@ -15,16 +15,14 @@ class Hockey
   def initialize(team1, team2, format_parameter = :text)
     @team1 = team1
     @team2 = team2
-    @formatter = build_formatter(format_parameter)
+    @printer = build_formatter(format_parameter)
   end
 
+
+  # @return [String]
   def print_result
-    @game_result = GameResult.new(who_win?(team1, team2))
-    @game_result.to_s
-  end
-
-  def print_format
-    @formatter
+    game_result = GameResult.new(who_win?(team1, team2)).to_s
+    @printer.format(game_result)
   end
 
   private
@@ -44,16 +42,11 @@ class Hockey
   # @param [Symbol] format_parameter
   # @return [AbstractOutput]
   def build_formatter(format_parameter)
-    game_result = GameResult.new(who_win?(team1, team2)).to_s
-    json_output = JsonOutput.new.format(game_result)
-    html_output = HtmlOutput.new.format(game_result)
-    text_output = TextOutput.new.format(game_result)
-
     case format_parameter
-    when :json then json_output
-    when :html then html_output
+    when :json then JsonOutput.new
+    when :html then HtmlOutput.new
     else
-      text_output
+      TextOutput.new
     end
   end
 end
