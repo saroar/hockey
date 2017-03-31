@@ -18,7 +18,6 @@ class Hockey
     @printer = build_formatter(format_parameter)
   end
 
-
   # @return [String]
   def print_result
     game_result = GameResult.new(who_win?(team1, team2)).to_s
@@ -43,8 +42,10 @@ class Hockey
   # @return [AbstractOutput]
   def build_formatter(format_parameter)
     case format_parameter
-    when :json then JsonOutput.new
-    when :html then HtmlOutput.new
+    when :json
+      JsonOutput.new
+    when :html
+      HtmlOutput.new
     else
       TextOutput.new
     end

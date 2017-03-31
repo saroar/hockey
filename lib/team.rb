@@ -8,6 +8,4 @@ class Team
     @name = name
     @score = score
   end
-
-
 end

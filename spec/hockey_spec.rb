@@ -9,16 +9,14 @@ describe Hockey do
   let(:team2) { Team.new('Team2', 2) }
   let(:hockey) { Hockey.new(team1, team2, :json) }
 
-
   describe '#print_result' do
     let(:who_win?) { hockey.who_win?(team1, team2) }
     let(:game_result) { GameResult.new(who_win?) }
 
     it 'should print result as text' do
-      expect(hockey.print_result).to eq("\"Game draw both team done good job\"")
+      expect(hockey.print_result).to eq('"Game draw both team done good job"')
     end
   end
-
 
   describe '#who_win?' do
     it 'should back team name and draw msg' do
@@ -54,7 +52,5 @@ describe Hockey do
         expect(hockey.send(:who_win?, team1, team2)).to eq('Team2 win')
       end
     end
-
   end
-
 end
